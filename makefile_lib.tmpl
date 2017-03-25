@@ -1,0 +1,10 @@
+include $(CONF_DIR)/common.in
+include $(CONF_DIR)/libs.in
+
+OBJS := $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(wildcard *.cpp))
+
+all: $(OBJS)
+
+$(BUILD_DIR)/%.o : %.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCLUDE) $< -o $@
+

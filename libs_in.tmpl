@@ -1,0 +1,6 @@
+LIB_DIR = $(ROOT_DIR)/src/lib
+
+
+LIB_DIRS = $(patsubst %, $(LIB_DIR)/%, $(LIBS))
+
+INCLUDE = $(patsubst %, -I%, $(LIB_DIRS))

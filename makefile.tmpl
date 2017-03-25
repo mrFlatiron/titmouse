@@ -1,0 +1,52 @@
+ROOT_DIR = $(shell pwd)
+CONF_DIR = $(ROOT_DIR)/config/
+
+
+BUILD_DIR = $(ROOT_DIR)/build/
+BIN_DIR = $(ROOT_DIR)/bin/
+SRC_DIR = $(ROOT_DIR)/src/
+TESTS_SRC_DIR = $(SRC_DIR)/tests/
+
+include $(CONF_DIR)/libs.in
+include $(CONF_DIR)/common.in
+
+MAIN_OBJ = $(patsubst %.cpp,%.o, $(MAIN_NAME))
+
+
+ALL_INS = $(patsubst %, %/files.in, $(LIB_DIRS))
+
+include $(ALL_INS)
+
+include $(TESTS_SRC_DIR)/files.in
+
+OBJS = $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(SOURCES))
+
+
+all: make_in_dirs $(BIN_DIR)/$(EXE)
+
+debug:
+	@echo "$(MAIN_OBJ) : $(TESTS_SRC_DIR)/$(MAIN)"
+	@echo $(MAIN_OBJ)
+
+
+make_in_dirs:
+	@for i in $(LIB_DIRS); do (cd $$i && $(MAKE) all \
+		ROOT_DIR="$(ROOT_DIR)" \
+		BUILD_DIR="$(BUILD_DIR)" \
+		LIB_DIR="$(LIB_DIR)" \
+		CONF_DIR="$(CONF_DIR)") || exit 1 ; done
+
+clean:
+	@cd $(BUILD_DIR); rm -f *.o; 
+	@cd $(BIN_DIR); rm -f $(EXE);
+
+sweep:
+	@find . -name '*~' -print0 | xargs -0 rm -f	
+
+
+$(BIN_DIR)/$(EXE) : $(BUILD_DIR)/$(MAIN_OBJ)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(BIN_DIR)/$(EXE)
+
+$(BUILD_DIR)/$(MAIN_OBJ): $(MAIN)
+	$(CXX) -c $(CXXFLAGS) $(INCLUDE) $(MAIN) -o $(BUILD_DIR)/$(MAIN_OBJ)
+

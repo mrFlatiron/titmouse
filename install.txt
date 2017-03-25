@@ -1,0 +1,5 @@
+  1. sudo cpan File::Path
+  2. sudo cpan Getopt::Long
+  3. sudo cp -R titmouse /usr/bin/   #assuming you have titmouse/  in your current dirctory
+  4. Add in your .bashrc:
+    export PATH="$PATH:/usr/bin/titmouse"
